@@ -1,11 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>Exercise 3</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/954543441e.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <center>
-        <h1>Daftar Planet</h1>
-    </center>
+  <center>
+      <h1>Daftar Planet</h1>
+  </center>
+
+  <div ng-app="myApp" ng-controller="myCtrl">
+    <div style="width: 15%">
+      <div class="input-group mb-2">
+        <div class="input-group-prepend">
+          <div class="input-group-text"><i class="fas fa-search"></i></div>
+        </div>
+        <input type="text" class="form-control" id="inlineFormInputGroup" placeholder="Cari" ng-model="fieldSearch"  ng-change="doSearch()">
+      </div>
+    </div>
+          <table style="width:100%;" border="1" class="w3-table-all">
+              <tr class="table table-borderless">
+                <th style="width:5%;padding-top: 20px; text-align:center" class="table-danger">Name</th>
+                <th style="width:5%;padding-top: 15px; text-align:center" class="table-warning">Rotation Period</th>
+                <th style="width:5%;padding-top: 15px; text-align:center" class="table-success">Orbital Period</th>
+                <th style="width:5%;padding-top: 20px; text-align:center" class="table-dark">Diameter</th>
+                <th style="width:8%;padding-top: 20px; text-align:center" class="table-secondary">Climate</th>
+                <th style="width:12%;padding-top: 20px; text-align:center" class="table-danger">Gravity</th>
+                <th style="width:12%;padding-top: 20px; text-align:center" class="table-success">Terrain</th>
+                <th style="width:8%;padding-top: 20px; text-align:center" class="table-warning">Surface Water</th>
+                <th style="width:5%;padding-top: 20px; text-align:center" class="table-dark">Population</th>
+                <th style="width:20%;padding-top: 20px; text-align:center" class="table-primary">Actions</th>
+              </tr>
+              <tr ng-repeat="planet in listPlanet" class="table table-borderless">
+              <td >{{planet.name}}</td>
+              <td style=" text-align:center">{{planet.rotation_period}}</td>
+              <td style=" text-align:center">{{planet.orbital_period}}</td>
+              <td style=" text-align:center">{{planet.diameter}}</td>
+              <td style=" text-align:center">{{planet.climate}}</td>
+              <td style=" text-align:center">{{planet.gravity}}</td>
+              <td style=" text-align:center">{{planet.terrain}}</td>
+              <td style=" text-align:center">{{planet.surface_water}}</td>
+              <td style=" text-align:center">{{planet.population}}</td>
+              <td style="text-align:center">
+                <button class="btn btn-primary" ng-click="showdetail(planet)">Detail</button>
+              </td>
+            </tr>
+          </table>
+          <div id="linkdetail" class="w3-modal">
+            <div class="w3-modal-content">
+              <div class="w3-container">
+                <span onclick="document.getElementById('linkdetail').style.display='none'" class="w3-button w3-display-topright">&times;</span>
+                <p>{{detailplanet.residents}}</p>
+              </div>
+
+            </div>
+
+          </div>
+
+   </div>
+   <!-- <script type="text/javascript" src="/DataTables/datatables.js"></script> -->
+
+   <script>
+      var app = angular.module('myApp', []);
+      app.controller('myCtrl', function($scope, $http) {
+      $scope.fieldSearch ="";
+      $scope.storeListPlanet = null;
+        $http.get("https://swapi.co/api/planets")
+        .then(function(response){
+          $scope.storeListPlanet = response.data.results;
+        $scope.listPlanet = response.data.results;
+      });
+      $scope.showdetail= function(planet){
+        console.log(planet)
+        $scope.detailplanet=planet;
+        document.getElementById('linkdetail').style.display='block'
+      }
+      $scope.doSearch = function() {
+        console.log($scope.fieldSearch)
+        if($scope.fieldSearch == "") {
+          $scope.listPlanet = $scope.storeListPlanet
+        } else {
+          $http.get("https://swapi.co/api/planets/?search="+$scope.fieldSearch)
+            .then(function(response){
+            $scope.listPlanet = response.data.results;
+          });
+        }
+
+      }
+    });
+
+   </script>
+
+
+
+
 </body>
 </html>
